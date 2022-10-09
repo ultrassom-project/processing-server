@@ -1,11 +1,10 @@
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get { req async in
-        "It works!"
-    }
-
-    app.get("hello") { req async -> String in
-        "Hello, world!"
-    }
+    let reconstruction = app.grouped("reconstructions")
+    reconstruction.post(use: enqueueReconstruction)
+    reconstruction.get("report", use: getReconstructionsReport)
+    
+    let performance = app.grouped("performance")
+    performance.get(use: getPerformanceReport)
 }
