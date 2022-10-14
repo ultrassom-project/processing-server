@@ -1,4 +1,3 @@
-import Foundation
 import Vapor
 
 public enum Algorithm: String, Codable {

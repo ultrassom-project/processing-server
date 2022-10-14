@@ -2,16 +2,13 @@ import Foundation
 
 public class PerformanceManager {
     public static let instance = PerformanceManager()
-    private init() { }
+    private init() {}
     
     private var snapshots = [PerformanceSnapshot]()
     private var lastCpuLoad: host_cpu_load_info?
     
     public func setup() {
         self.lastCpuLoad = hostCPULoadInfo()
-        
-        // TODO: create scheduled task that calls createSnapshot() every 5 seconds
-        self.createSnapshot()
     }
     
     public func createSnapshot() {
@@ -62,10 +59,10 @@ public class PerformanceManager {
         let niceDiff = Float(load.cpu_ticks.3 - lastLoad.cpu_ticks.3);
 
         let totalTicks = usrDiff + systDiff + idleDiff + niceDiff
-        let sys = systDiff / totalTicks * 100.0
-        let usr = usrDiff / totalTicks * 100.0
+//        let sys = systDiff / totalTicks * 100.0
+//        let usr = usrDiff / totalTicks * 100.0
         let idle = idleDiff / totalTicks * 100.0
-        let nice = niceDiff / totalTicks * 100.0
+//        let nice = niceDiff / totalTicks * 100.0
         self.lastCpuLoad = load
 
         return 100 - idle;

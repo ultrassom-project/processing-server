@@ -1,10 +1,8 @@
-import Foundation
 import Vapor
-
 
 public func enqueueReconstruction(req: Request) async throws -> HTTPStatus {
     let reconstruction = try req.content.decode(ReconstructionInput.self)
-    ReconstructionManager.instance.enqueue(reconstruction)
+    ReconstructionManager.instance.enqueueReconstructionInput(reconstruction)
     return HTTPStatus.created
 }
 

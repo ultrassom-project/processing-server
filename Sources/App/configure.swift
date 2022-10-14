@@ -1,13 +1,17 @@
 import Vapor
+import Queues
+import QueuesRedisDriver
 
-// configures your application
 public func configure(_ app: Application) throws {
-    // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    PerformanceManager.instance.setup()
 
-    // register routes
     try routes(app)
     
-    PerformanceManager.instance.setup()
-    ReconstructionManager.instance.setup()
+    try app.queues.use(.redis(url: "redis://127.0.0.1:6379"))
+    
+    app.queues.schedule(CreatePerformanceManagerSnapshot()).everySecond()
+    app.queues.schedule(RunReconstructionManagerHandler()).everySecond()
+    
+    try app.queues.startInProcessJobs()
+    try app.queues.startScheduledJobs()
 }
