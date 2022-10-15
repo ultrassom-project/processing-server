@@ -7,7 +7,7 @@ public class PerformanceManager {
     private var snapshots = [PerformanceSnapshot]()
     private var lastCpuLoad: host_cpu_load_info?
     
-    public func setup() {
+    public func configure() {
         self.lastCpuLoad = hostCPULoadInfo()
     }
     
@@ -21,31 +21,15 @@ public class PerformanceManager {
     }
     
     private func getMemoryUsage() -> Float {
-        var used_megabytes: Float = 0
-            
-        let total_bytes = Float(ProcessInfo.processInfo.physicalMemory)
-        let total_megabytes = total_bytes / 1024.0 / 1024.0
-        
-        var info = mach_task_basic_info()
-        var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
-        
-        let kerr: kern_return_t = withUnsafeMutablePointer(to: &info) {
+        var taskInfo = task_vm_info_data_t()
+        var count = mach_msg_type_number_t(MemoryLayout<task_vm_info>.size) / 4
+        let result: kern_return_t = withUnsafeMutablePointer(to: &taskInfo) {
             $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
-                task_info(
-                    mach_task_self_,
-                    task_flavor_t(MACH_TASK_BASIC_INFO),
-                    $0,
-                    &count
-                )
+                task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
             }
         }
         
-        if kerr == KERN_SUCCESS {
-            let used_bytes: Float = Float(info.resident_size)
-            used_megabytes = used_bytes / 1024.0 / 1024.0
-        }
-        
-        return used_megabytes / total_megabytes * 100
+        return result == KERN_SUCCESS ? Float(taskInfo.phys_footprint) / 1048576.0 : -1
     }
     
     private func getCpuUsage() -> Float {
@@ -59,10 +43,11 @@ public class PerformanceManager {
         let niceDiff = Float(load.cpu_ticks.3 - lastLoad.cpu_ticks.3);
 
         let totalTicks = usrDiff + systDiff + idleDiff + niceDiff
-//        let sys = systDiff / totalTicks * 100.0
-//        let usr = usrDiff / totalTicks * 100.0
-        let idle = idleDiff / totalTicks * 100.0
-//        let nice = niceDiff / totalTicks * 100.0
+//        let sys = (systDiff / totalTicks) * 100.0
+//        let usr = (usrDiff / totalTicks) * 100.0
+        let idle = (idleDiff / totalTicks) * 100.0
+//        let nice = (niceDiff / totalTicks) * 100.0
+        
         self.lastCpuLoad = load
 
         return 100 - idle;
@@ -78,7 +63,7 @@ public class PerformanceManager {
                 host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO, $0, &size)
             }
         }
-        if result != KERN_SUCCESS{
+        if result != KERN_SUCCESS {
             print("Error  - \(#file): \(#function) - kern_result_t = \(result)")
             return nil
         }

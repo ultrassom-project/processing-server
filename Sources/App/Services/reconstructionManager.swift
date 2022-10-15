@@ -1,24 +1,16 @@
-import Queues
 import Vapor
 
 public class ReconstructionManager {
     public static let instance = ReconstructionManager()
     private init() {}
     
+    private let logger = Logger(label: "ReconstructionManager")
     private let reconstructionService = ReconstructionService()
-    private var inputQueue = [ReconstructionInput]()
+    private var inputQueue = FIFOQueue<ReconstructionInput>()
     private var outputList = [ReconstructionOutput]()
     
-    public func enqueueReconstructionInput(_ input: ReconstructionInput) {
-        inputQueue.append(input)
-    }
-    
-    private func dequeueReconstructionInput() -> ReconstructionInput? {
-        guard (inputQueue.first != nil) else {
-            return nil
-        }
-        
-        return inputQueue.removeFirst()
+    public func enqueueInput(_ item: ReconstructionInput) {
+        inputQueue.enqueue(item)
     }
     
     public func getReport() -> [ReconstructionOutput] {
@@ -27,21 +19,24 @@ public class ReconstructionManager {
     
     public func handle() {
         guard reconstructionService.canStartNewReconstruction() == true else {
-            print("Cannot start new reconstruction")
+            logger.debug("Cannot start new reconstruction: Reconstruction service busy")
             return
         }
         
-        guard let input = dequeueReconstructionInput() else {
-            print("Input queue is empty")
+        guard let input = inputQueue.dequeue() else {
+            logger.debug("Cannot start new reconstruction: Input queue empty")
             return
         }
         
         Task(priority: .background) {
+            logger.info("Reconstruction started")
+            
             guard let reconstructionOutput = reconstructionService.reconstruct(input) else {
-                print("Failed reconstructing input")
+                logger.error("Reconstruction failed")
                 return
             }
             
+            logger.info("Reconstruction finished with success")
             outputList.append(reconstructionOutput)
         }
     }

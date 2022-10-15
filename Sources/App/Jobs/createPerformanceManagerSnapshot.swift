@@ -8,7 +8,6 @@ public struct CreatePerformanceManagerSnapshot: AsyncScheduledJob {
         Self.i += 1
         
         if Self.i % Self.runEvery == 0 {
-            print("Running CreatePerformanceManagerSnapshot scheduled job")
             PerformanceManager.instance.createSnapshot()
         }
     }
