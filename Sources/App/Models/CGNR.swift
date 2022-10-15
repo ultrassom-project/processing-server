@@ -1,20 +1,22 @@
 import Foundation
 
 public class CGNR {
+    private let modelUrl: URL;
     private var modelMatrix: [[Float]]?
     
-    public init() {
+    public init(modelUrl: URL) {
         self.modelMatrix = nil
+        self.modelUrl = modelUrl
     }
     
-    public func loadModel(fileUrl: URL) {
+    public func loadModel() {
         if modelMatrix == nil {
-            guard FileManager.default.fileExists(atPath: fileUrl.path) else {
-                preconditionFailure("File \(fileUrl.absoluteString) is missing")
+            guard FileManager.default.fileExists(atPath: modelUrl.path) else {
+                preconditionFailure("File \(modelUrl.absoluteString) is missing")
             }
             
-            guard let filePointer: UnsafeMutablePointer<FILE> = fopen(fileUrl.path, "r") else {
-                preconditionFailure("Could not open file at \(fileUrl.absoluteString)")
+            guard let filePointer: UnsafeMutablePointer<FILE> = fopen(modelUrl.path, "r") else {
+                preconditionFailure("Could not open file at \(modelUrl.absoluteString)")
             }
             
             var lineByteArrayPointer: UnsafeMutablePointer<CChar>? = nil
