@@ -24,7 +24,7 @@ public func loadSignalVectorFromFile(fileName: String, ext: String) -> [Float] {
     var signalVector: [Float] = []
             
     while bytesRead > 0 {
-        var lineAsString: String = String(cString: lineByteArrayPointer!)
+        let lineAsString: String = String(cString: lineByteArrayPointer!)
         let lineAsFloat: Float = (lineAsString as NSString).floatValue
         signalVector.append(lineAsFloat)
         bytesRead = getline(&lineByteArrayPointer, &lineCap, filePointer)

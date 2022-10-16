@@ -4,7 +4,7 @@ public class ReconstructionService {
     private let cgnr = CGNR()
     private let cgne = CGNE()
     private var reconstructionsInProgress = 0
-    private let errorConvergence: Float = 0.0001
+    private let errorConvergence: Float = 1e-4
     
     public init() {}
     
@@ -29,6 +29,7 @@ public class ReconstructionService {
     }
     
     public func canStartNewReconstruction() -> Bool {
+        // TODO: ask performance manager for current status (maybe)
         return reconstructionsInProgress <= 1
     }
 }
