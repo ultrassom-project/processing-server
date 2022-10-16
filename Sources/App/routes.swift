@@ -2,9 +2,10 @@ import Vapor
 
 func routes(_ app: Application) throws {
     let reconstruction = app.grouped("reconstructions")
-    reconstruction.post(use: enqueueReconstruction)
-    reconstruction.get("report", use: getReconstructionsReport)
+    reconstruction.on(.POST, "", body: .collect(maxSize: ByteCount(stringLiteral: "200MB")), use: enqueueReconstruction)
+    reconstruction.on(.GET, "report", use: getReconstructionsReport)
     
     let performance = app.grouped("performance")
-    performance.get(use: getPerformanceReport)
+    performance.on(.GET, "", use: getPerformanceReport)
+
 }

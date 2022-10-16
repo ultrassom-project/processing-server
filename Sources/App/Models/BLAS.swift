@@ -55,20 +55,17 @@ public class BLAS {
      
      return     -> (alpha * M * A) or (alpha * M(T) * a)
      */
-    public static func multiplyMatrixByVector(transposeM: Bool, alpha: Float, M: [[Float]], A: [Float]) -> [Float] {
-        let Mrows = M.count
-        let MCols = M[0].count
-        
+    public static func multiplyMatrixByVector(transposeM: Bool, alpha: Float, M: [Float], MRows: Int, MCols: Int, A: [Float]) -> [Float] {
         var out: [Float] = []
         
         // Multiplies a single-precision matrix by a vector.
         cblas_sgemv(
             CblasRowMajor,                              // Specifies row-major (C) or column-major (Fortran) data ordering.
             transposeM ? CblasTrans : CblasNoTrans,     // Specifies whether to transpose matrix A.
-            Int32(Mrows),                               // Number of rows in matrix A.
+            Int32(MRows),                               // Number of rows in matrix A.
             Int32(MCols),                               // Number of columns in matrix A.
             alpha,                                      // Scaling factor for the product of matrix A and vector X.
-            M.flatMap { $0 },                           // Matrix A.
+            M,                                          // Matrix A.
             Int32(MCols),                               // The size of the first dimension of matrix A. For a matrix A[M][N] that uses column-major ordering, the value is the number of rows M. For a matrix that uses row-major ordering, the value is the number of columns N.
             A,                                          // Vector X.
             1,                                          // Stride within X. For example, if incX is 7, every seventh element is used.

@@ -3,15 +3,19 @@ import Vapor
 public class ReconstructionAlgorithm {
     public let logger = Logger(label: "ReconstructionAlgorithm")
     public let modelUrl: URL
-    public var modelMatrix: [[Float]]?
+    public var modelMatrixRows: Int
+    public var modelMatrixCols: Int
+    public var modelMatrix: [Float]?
     
     public init(modelUrl: URL) {
         self.modelUrl = modelUrl
+        self.modelMatrixRows = 0
+        self.modelMatrixCols = 0
     }
     
     public func loadModel() {
         guard modelMatrix == nil else {
-            logger.error("Model already loaded")
+            logger.debug("Model already loaded")
             return
         }
 
@@ -35,18 +39,34 @@ public class ReconstructionAlgorithm {
         var lineCap: Int = 0
         var bytesRead = getline(&lineByteArrayPointer, &lineCap, filePointer)
         
+        let startDate = Date()
+        
         self.modelMatrix = []
         
+        var rows = 0
+        var cols = 0
         while (bytesRead > 0) {
             let lineAsString: String = String.init(cString: lineByteArrayPointer!)
             let lineAsFloatArray: [Float] = lineAsString.components(separatedBy: ",").map { ($0 as NSString).floatValue }
-            modelMatrix?.append(lineAsFloatArray)
+            modelMatrix?.append(contentsOf: lineAsFloatArray)
             bytesRead = getline(&lineByteArrayPointer, &lineCap, filePointer)
+            
+            rows += 1
+            cols = lineAsFloatArray.count
         }
+        
+        self.modelMatrixCols = cols
+        self.modelMatrixRows = rows
+        
+        let endDate = Date()
+        
+        logger.info("Model loaded in \(endDate.timeIntervalSinceReferenceDate - startDate.timeIntervalSinceReferenceDate) seconds")
     }
     
     public func unloadModel() {
         self.modelMatrix = nil
+        self.modelMatrixRows = 0
+        self.modelMatrixCols = 0
     }
     
     public func calculateError(A: [Float], B: [Float]) -> Float {
