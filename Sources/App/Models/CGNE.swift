@@ -6,6 +6,6 @@ public class CGNE: ReconstructionAlgorithm {
     }
     
     public override func run(reconstructionInput: ReconstructionInput, errorConvergence: Float) -> ReconstructionOutput? {
-        return ReconstructionOutput(input: reconstructionInput, outputVector: reconstructionInput.signalVector, iterations: 10, startTime: Date(), endTime: Date())
+        return ReconstructionOutput(input: reconstructionInput, outputImageArray: [], iterations: 10, startTime: Date(), endTime: Date())
     }
 }

@@ -1,6 +1,7 @@
 import Vapor
 import Queues
 import QueuesRedisDriver
+import Cocoa
 
 public func configure(_ app: Application) throws {
     PerformanceManager.instance.configure()

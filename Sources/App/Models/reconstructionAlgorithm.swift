@@ -1,4 +1,6 @@
 import Vapor
+import Cocoa
+import Foundation
 
 public class ReconstructionAlgorithm {
     public let logger = Logger(label: "ReconstructionAlgorithm")
@@ -64,6 +66,30 @@ public class ReconstructionAlgorithm {
         self.model = nil
         self.modelRows = 0
         self.modelCols = 0
+    }
+    
+    public func createImageHexMatrix(vector: [Float], rows: Int, cols: Int) -> [[String]] {
+        var convertedArray: [[String]] = Array(repeating: Array(repeating: "", count: cols), count: rows);
+        let upperLimit: Float = 1
+        let lowerLimit: Float = 0
+        let newRange: Float = upperLimit - lowerLimit
+        
+        guard let vectorLimits = vector.minAndMax() else {
+            return []
+        }
+        
+        let oldRange: Float = vectorLimits.max - vectorLimits.min
+        
+        var k: Int = 0
+        for i in 0..<rows {
+            for j in 0..<cols {
+                let whiteColor = (((vector[k] - vectorLimits.min) * newRange) / oldRange) + lowerLimit
+                convertedArray[i][j] = NSColor.hexStringFrom(white: whiteColor)
+                k += 1
+            }
+        }
+        
+        return convertedArray
     }
     
     public func calculateError(A: [Float], B: [Float]) -> Float {

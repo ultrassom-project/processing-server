@@ -56,7 +56,7 @@ public class BLAS {
      return     -> (alpha * M * A) or (alpha * M(T) * a)
      */
     public static func multiplyMatrixByVector(transposeM: Bool, alpha: Float, M: [Float], MRows: Int, MCols: Int, A: [Float]) -> [Float] {
-        var out: [Float] = Array(repeating: 0.0, count: MRows)
+        var out: [Float] = Array(repeating: 0.0, count: transposeM ? MCols : MRows)
         
         
         // Multiplies a single-precision matrix by a vector.

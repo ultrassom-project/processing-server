@@ -38,7 +38,7 @@ public class CGNR: ReconstructionAlgorithm {
 
         return ReconstructionOutput(
             input: reconstructionInput,
-            outputVector: f,
+            outputImageArray: createImageHexMatrix(vector: f, rows: 30, cols: 30),
             iterations: iterations,
             startTime: startTime,
             endTime: Date()
