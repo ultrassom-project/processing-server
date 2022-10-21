@@ -91,4 +91,85 @@ public class BLAS {
             1                   // Stride within X. For example, if incX is 7, every 7th element is used.
         )
     }
+    
+    
+    public static func multiplyMatrixByVector(
+        matrix: [Float],
+        rows: Int,
+        columns: Int,
+        transposeMatrix: Bool = false,
+        vector: [Float]
+    ) -> [Float] {
+        let matrixRowCount = Int32(rows)
+        let matrixColumnCount = Int32(columns)
+        var result: [Float] = Array(repeating: 0, count: vector.count)
+        cblas_sgemv(
+            CblasRowMajor,
+            transposeMatrix ? CblasTrans : CblasNoTrans,
+            matrixRowCount,
+            matrixColumnCount,
+            1,
+            matrix,
+            matrixColumnCount,
+            vector,
+            1,
+            1,
+            &result,
+            1
+        )
+        return result
+    }
+    
+    public static func multiplyVectorByItsTranspose(_ vector: [Float]) -> Float {
+        var result: [Float] = [0]
+        cblas_sgemm(
+            CblasRowMajor,
+            CblasTrans,
+            CblasNoTrans,
+            1,
+            1,
+            Int32(vector.count),
+            1,
+            vector,
+            1,
+            vector,
+            1,
+            1,
+            &result,
+            1
+        )
+        
+        return result[0]
+    }
+    
+    public static func euclideanNorm(of vector: [Float]) -> Float {
+        let result = cblas_snrm2(
+            Int32(vector.count),
+            vector,
+            1
+        )
+        
+        return result
+    }
+    
+    public static func sumVectors(
+        _ vector1: [Float],
+        alpha: Float = 1,
+        _ vector2: [Float],
+        beta: Float = 1
+    ) -> [Float] {
+        let vectorsElementCount = Int32(vector1.count)
+        var result = vector2
+        catlas_saxpby(
+            vectorsElementCount,
+            alpha,
+            vector1,
+            1,
+            beta,
+            &result,
+            1
+        )
+        
+        return result
+    }
 }
