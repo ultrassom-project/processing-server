@@ -84,7 +84,7 @@ public class ReconstructionAlgorithm {
         for i in 0..<rows {
             for j in 0..<cols {
                 let whiteColor = (((vector[k] - vectorLimits.min) * newRange) / oldRange) + lowerLimit
-                convertedArray[i][j] = NSColor.hexStringFrom(white: whiteColor)
+                convertedArray[j][i] = NSColor.hexStringFrom(white: whiteColor)
                 k += 1
             }
         }
