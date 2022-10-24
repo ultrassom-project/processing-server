@@ -1,5 +1,21 @@
 import Foundation
 
+public func generateReconstructionInputFromFile(
+    fileName: String,
+    ext: String,
+    dimension: ReconstructionDimension,
+    algorithm: ReconstructionAlgorithmType,
+    signalGain: Float
+) -> ReconstructionInput {
+    return ReconstructionInput(
+        userId: UUID().uuidString,
+        algorithm: algorithm,
+        dimension: dimension,
+        signalGain: signalGain,
+        signalVector: loadSignalVectorFromFile(fileName: fileName, ext: ext)
+    )
+}
+
 public func loadSignalVectorFromFile(fileName: String, ext: String) -> [Float] {
     let url = URL.fromFilesFolder(name: fileName, ext: ext)
 

@@ -3,43 +3,23 @@ import Accelerate
 
 public class BLAS {
     /**
-     alpha  -> scalar
-     A      -> vector
+     v1Scale    -> scalar
+     v1         -> vector
+     v2Scale    -> scalar
+     v2         -> vector
      
-     return -> alpha * A
+     return -> (v1Scale * v1) + (v2Scale * v2)
      */
-    public static func scaleVector(alpha: Float, A: [Float]) -> [Float] {
-        var va: [Float] = A
-        
-        // Multiplies each element of a vector by a constant (single-precision).
-        cblas_sscal(
-            Int32(A.count),     // Number of elements to scale.
-            alpha,              // The constant to multiply by.
-            &va,                // Vector x.
-            1                   // Stride within X. For example, if incX is 7, every 7th element is multiplied by alpha.
-        )
-        
-        return va
-    }
-    
-    /**
-     alpha  -> scalar
-     A      -> vector
-     beta   -> scalar
-     B      -> vector
-     
-     return -> (alpha * A) + (beta * B)
-     */
-    public static func sumVectors(alpha: Float, A: [Float], beta: Float, B: [Float]) -> [Float] {
-        var vb: [Float] = B
+    public static func sumVectors(v1Scale: Float = 1, v1: [Float], v2Scale: Float = 1, v2: [Float]) -> [Float] {
+        var vb: [Float] = v2
         
         // Computes the sum of two vectors, scaling each one separately (single-precision).
         catlas_saxpby(
-            Int32(A.count),     // Number of elements in the vector.
-            alpha,              // Scaling factor for X.
-            A,                  // Input vector X.
+            Int32(v1.count),    // Number of elements in the vector.
+            v1Scale,            // Scaling factor for X.
+            v1,                 // Input vector X.
             1,                  // Stride within X. For example, if incX is 7, every 7th element is used.
-            beta,               // Scaling factor for Y.
+            v2Scale,            // Scaling factor for Y.
             &vb,                // Input vector Y.
             1                   // Stride within Y. For example, if incY is 7, every 7th element is used.
         )
@@ -48,16 +28,17 @@ public class BLAS {
     }
     
     /**
-     transposeM -> boolean (Transpose M)
-     alpha      -> scalar
+     transposeM -> boolean
+     MScale     -> scalar
      M          -> matrix
-     A          -> vector
+     MRows      -> integer
+     MCols      -> integer
+     v          -> vector
      
-     return     -> (alpha * M * A) or (alpha * M(T) * a)
+     return     -> (MScale * M * v) or (MScale * M(T) * v)
      */
-    public static func multiplyMatrixByVector(transposeM: Bool, alpha: Float, M: [Float], MRows: Int, MCols: Int, A: [Float]) -> [Float] {
+    public static func multiplyMatrixByVector(transposeM: Bool = false, MScale: Float = 1, M: [Float], MRows: Int, MCols: Int, v: [Float]) -> [Float] {
         var out: [Float] = Array(repeating: 0.0, count: transposeM ? MCols : MRows)
-        
         
         // Multiplies a single-precision matrix by a vector.
         cblas_sgemv(
@@ -65,10 +46,10 @@ public class BLAS {
             transposeM ? CblasTrans : CblasNoTrans,     // Specifies whether to transpose matrix A.
             Int32(MRows),                               // Number of rows in matrix A.
             Int32(MCols),                               // Number of columns in matrix A.
-            alpha,                                      // Scaling factor for the product of matrix A and vector X.
+            MScale,                                     // Scaling factor for the product of matrix A and vector X.
             M,                                          // Matrix A.
             Int32(MCols),                               // The size of the first dimension of matrix A. For a matrix A[M][N] that uses column-major ordering, the value is the number of rows M. For a matrix that uses row-major ordering, the value is the number of columns N.
-            A,                                          // Vector X.
+            v,                                          // Vector X.
             1,                                          // Stride within X. For example, if incX is 7, every seventh element is used.
             1,                                          // Scaling factor for vector Y.
             &out,                                       // Vector Y
@@ -83,93 +64,41 @@ public class BLAS {
      
      return ||A||_2
      */
-    public static func vectorL2Norm(_ A: [Float]) -> Float {
+    public static func vectorL2Norm(_ v: [Float]) -> Float {
         // Computes the L2 norm (Euclidian length) of a vector (single precision).
         return cblas_snrm2(
-            Int32(A.count),     // Length of vector X.
-            A,                  // Vector X.
+            Int32(v.count),     // Length of vector X.
+            v,                  // Vector X.
             1                   // Stride within X. For example, if incX is 7, every 7th element is used.
         )
     }
     
-    
-    public static func multiplyMatrixByVector(
-        matrix: [Float],
-        rows: Int,
-        columns: Int,
-        transposeMatrix: Bool = false,
-        vector: [Float]
-    ) -> [Float] {
-        let matrixRowCount = Int32(rows)
-        let matrixColumnCount = Int32(columns)
-        var result: [Float] = Array(repeating: 0, count: vector.count)
-        cblas_sgemv(
-            CblasRowMajor,
-            transposeMatrix ? CblasTrans : CblasNoTrans,
-            matrixRowCount,
-            matrixColumnCount,
-            1,
-            matrix,
-            matrixColumnCount,
-            vector,
-            1,
-            1,
-            &result,
-            1
-        )
-        return result
-    }
-    
-    public static func multiplyVectorByItsTranspose(_ vector: [Float]) -> Float {
-        var result: [Float] = [0]
+    /**
+     v  -> vector
+     
+     return ?
+     */
+    public static func multiplyVectorByItsTranspose(_ v: [Float]) -> Float {
+        var out: [Float] = [0]
+        
+        // Multiplies two matrices (single-precision).
         cblas_sgemm(
-            CblasRowMajor,
-            CblasTrans,
-            CblasNoTrans,
-            1,
-            1,
-            Int32(vector.count),
-            1,
-            vector,
-            1,
-            vector,
-            1,
-            1,
-            &result,
-            1
+            CblasRowMajor,      // Specifies row-major (C) or column-major (Fortran) data ordering.
+            CblasTrans,         // Specifies whether to transpose matrix A.
+            CblasNoTrans,       // Specifies whether to transpose matrix B.
+            1,                  // Number of rows in matrices A and C.
+            1,                  // Number of columns in matrices B and C.
+            Int32(v.count),     // Number of columns in matrix A; number of rows in matrix B.
+            1,                  // Scaling factor for the product of matrices A and B.
+            v,                  // Matrix A.
+            1,                  // The size of the first dimension of matrix A; if you are passing a matrix A[m][n], the value should be m.
+            v,                  // Matrix B.
+            1,                  // The size of the first dimension of matrix B; if you are passing a matrix B[m][n], the value should be m.
+            1,                  // Scaling factor for matrix C.
+            &out,               // Matrix C.
+            1                   // The size of the first dimension of matrix C; if you are passing a matrix C[m][n], the value should be m.
         )
         
-        return result[0]
-    }
-    
-    public static func euclideanNorm(of vector: [Float]) -> Float {
-        let result = cblas_snrm2(
-            Int32(vector.count),
-            vector,
-            1
-        )
-        
-        return result
-    }
-    
-    public static func sumVectors(
-        _ vector1: [Float],
-        alpha: Float = 1,
-        _ vector2: [Float],
-        beta: Float = 1
-    ) -> [Float] {
-        let vectorsElementCount = Int32(vector1.count)
-        var result = vector2
-        catlas_saxpby(
-            vectorsElementCount,
-            alpha,
-            vector1,
-            1,
-            beta,
-            &result,
-            1
-        )
-        
-        return result
+        return out[0]
     }
 }

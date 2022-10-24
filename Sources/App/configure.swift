@@ -20,4 +20,16 @@ public func configure(_ app: Application) throws {
     app.queues.schedule(CreatePerformanceManagerSnapshot()).everySecond()
     app.queues.schedule(RunReconstructionManagerHandler()).everySecond()
     try app.queues.startScheduledJobs()
+    
+    /**
+     Debug
+     */
+//    let debugInput = generateReconstructionInputFromFile(
+//        fileName: "signal_30x30_1", //
+//        ext: "csv",
+//        dimension: ._30x30,
+//        algorithm: .CGNR,
+//        signalGain: 1
+//    )
+//    ReconstructionManager.instance.enqueueInput(debugInput)
 }
