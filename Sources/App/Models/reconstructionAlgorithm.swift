@@ -13,7 +13,9 @@ public class ReconstructionAlgorithm {
         let lowerLimit: Float = 0
         let newRange: Float = upperLimit - lowerLimit
         
-        guard let vectorLimits = vector.minAndMax() else {
+        let modulatedVector = vector.map { $0 >= 0 ? $0 : 0 }
+        
+        guard let vectorLimits = modulatedVector.minAndMax() else {
             return []
         }
         
@@ -22,8 +24,9 @@ public class ReconstructionAlgorithm {
         var k: Int = 0
         for i in 0..<rows {
             for j in 0..<cols {
-                let whiteColor = (((vector[k] - vectorLimits.min) * newRange) / oldRange) + lowerLimit
-                convertedArray[j][i] = NSColor.hexStringFrom(white: whiteColor)
+                let whiteColor = (((modulatedVector[k] - vectorLimits.min) * newRange) / oldRange) + lowerLimit
+                let roundedWhiteColor = Float(round(10 * whiteColor) / 10)
+                convertedArray[j][i] = NSColor.hexStringFrom(white: roundedWhiteColor)
                 k += 1
             }
         }

@@ -4,8 +4,6 @@ import QueuesRedisDriver
 import Cocoa
 
 public func configure(_ app: Application) throws {
-    PerformanceManager.instance.configure()
-    
     let corsConfiguration = CORSMiddleware.Configuration(
         allowedOrigin: .all,
         allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
@@ -15,6 +13,8 @@ public func configure(_ app: Application) throws {
     app.middleware.use(cors, at: .beginning)
 
     try routes(app)
+    
+    PerformanceManager.instance.configure()
     
     try app.queues.use(.redis(url: "redis://127.0.0.1:6379"))
     app.queues.schedule(CreatePerformanceManagerSnapshot()).everySecond()

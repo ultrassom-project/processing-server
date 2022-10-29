@@ -17,6 +17,15 @@ public enum ReconstructionDimension: Int, Codable {
                 return URL.fromFilesFolder(name: "model_60x60", ext: "csv")
         }
     }
+    
+    func name() -> String {
+        switch self {
+            case ._30x30:
+                return "30x30"
+            case ._60x60:
+                return "60x60"
+        }
+    }
 }
 
 public struct ReconstructionInput: Content {

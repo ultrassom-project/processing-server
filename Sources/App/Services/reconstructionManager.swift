@@ -10,7 +10,9 @@ public class ReconstructionManager {
     private var outputList = [ReconstructionOutput]()
     
     public func enqueueInput(_ item: ReconstructionInput) {
-        inputQueue.enqueue(item)
+        Task(priority: .background) {
+            inputQueue.enqueue(item)
+        }
     }
     
     public func getReport() -> [ReconstructionOutput] {
@@ -18,25 +20,25 @@ public class ReconstructionManager {
     }
     
     public func handle() {
-        guard reconstructionService.canStartNewReconstruction() == true else {
-            logger.debug("Cannot start new reconstruction: Reconstruction service busy")
-            return
-        }
-        
-        guard let input = inputQueue.dequeue() else {
-            logger.debug("Cannot start new reconstruction: Input queue empty")
-            return
-        }
-        
-        Task(priority: .background) {
-            logger.info("Reconstruction started")
-            
-            guard let reconstructionOutput = reconstructionService.reconstruct(input) else {
-                logger.error("Reconstruction failed")
+        Task(priority: .medium) {
+            guard reconstructionService.canStartNewReconstruction() == true else {
+                logger.debug("Cannot start new reconstruction: Reconstruction service busy")
                 return
             }
             
-            logger.info("Reconstruction finished with success")
+            guard let input = inputQueue.dequeue() else {
+                logger.debug("Cannot start new reconstruction: Input queue empty")
+                return
+            }
+            
+            logger.info("Reconstruction \(input.userId) \(input.dimension) started")
+            
+            guard let reconstructionOutput = reconstructionService.reconstruct(input) else {
+                logger.error("Reconstruction \(input.userId) \(input.dimension) failed")
+                return
+            }
+            
+            logger.info("Reconstruction \(input.userId) \(input.dimension) finished with success")
             outputList.append(reconstructionOutput)
         }
     }
