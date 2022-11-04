@@ -13,7 +13,7 @@ public class ReconstructionAlgorithm {
         let lowerLimit: Float = 0
         let newRange: Float = upperLimit - lowerLimit
         
-        let modulatedVector = vector.map { $0 >= 0 ? $0 : 0 }
+        let modulatedVector = vector.map { abs($0) }
         
         guard let vectorLimits = modulatedVector.minAndMax() else {
             return []
