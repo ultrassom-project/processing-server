@@ -132,53 +132,53 @@ public func configure(_ app: Application) throws {
 //        )
 //    )
     
-    ReconstructionManager.instance.enqueueInput(
-        generateReconstructionInputFromFile(
-            fileName: "signal_60x60_3",
-            ext: "csv",
-            dimension: ._60x60,
-            algorithm: .CGNR,
-            signalGain: 1
-        )
-    )
-    
-    ReconstructionManager.instance.enqueueInput(
-        generateReconstructionInputFromFile(
-            fileName: "signal_60x60_3",
-            ext: "csv",
-            dimension: ._60x60,
-            algorithm: .CGNR,
-            signalGain: 1
-        )
-    )
-    
-    ReconstructionManager.instance.enqueueInput(
-        generateReconstructionInputFromFile(
-            fileName: "signal_60x60_3",
-            ext: "csv",
-            dimension: ._60x60,
-            algorithm: .CGNR,
-            signalGain: 1
-        )
-    )
-    
-    ReconstructionManager.instance.enqueueInput(
-        generateReconstructionInputFromFile(
-            fileName: "signal_60x60_3",
-            ext: "csv",
-            dimension: ._60x60,
-            algorithm: .CGNR,
-            signalGain: 1
-        )
-    )
-    
-    ReconstructionManager.instance.enqueueInput(
-        generateReconstructionInputFromFile(
-            fileName: "signal_60x60_3",
-            ext: "csv",
-            dimension: ._60x60,
-            algorithm: .CGNR,
-            signalGain: 1
-        )
-    )
+//    ReconstructionManager.instance.enqueueInput(
+//        generateReconstructionInputFromFile(
+//            fileName: "signal_60x60_3",
+//            ext: "csv",
+//            dimension: ._60x60,
+//            algorithm: .CGNR,
+//            signalGain: 1
+//        )
+//    )
+//
+//    ReconstructionManager.instance.enqueueInput(
+//        generateReconstructionInputFromFile(
+//            fileName: "signal_60x60_3",
+//            ext: "csv",
+//            dimension: ._60x60,
+//            algorithm: .CGNR,
+//            signalGain: 1
+//        )
+//    )
+//
+//    ReconstructionManager.instance.enqueueInput(
+//        generateReconstructionInputFromFile(
+//            fileName: "signal_60x60_3",
+//            ext: "csv",
+//            dimension: ._60x60,
+//            algorithm: .CGNR,
+//            signalGain: 1
+//        )
+//    )
+//
+//    ReconstructionManager.instance.enqueueInput(
+//        generateReconstructionInputFromFile(
+//            fileName: "signal_60x60_3",
+//            ext: "csv",
+//            dimension: ._60x60,
+//            algorithm: .CGNR,
+//            signalGain: 1
+//        )
+//    )
+//
+//    ReconstructionManager.instance.enqueueInput(
+//        generateReconstructionInputFromFile(
+//            fileName: "signal_60x60_3",
+//            ext: "csv",
+//            dimension: ._60x60,
+//            algorithm: .CGNR,
+//            signalGain: 1
+//        )
+//    )
 }

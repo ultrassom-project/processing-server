@@ -22,18 +22,85 @@ public class ReconstructionService {
     
     public init() {
         Task(priority: .high) {
-            loadModel(dimension: ReconstructionDimension._30x30, model: &model30x30, rows: &model30x30Rows, cols: &model30x30Cols)
+            loadModel(
+                dimension: ReconstructionDimension._30x30,
+                model: &model30x30,
+                rows: &model30x30Rows,
+                cols: &model30x30Cols
+            )
             model30x30Loaded = true
         }
         
         Task(priority: .high) {
-            loadModel(dimension: ReconstructionDimension._60x60, model: &model60x60, rows: &model60x60Rows, cols: &model60x60Cols)
+            loadModel(
+                dimension: ReconstructionDimension._60x60,
+                model: &model60x60,
+                rows: &model60x60Rows,
+                cols: &model60x60Cols
+            )
             model60x60Loaded = true
         }
     }
     
-    private func loadModel(dimension: ReconstructionDimension, model: inout [Float]?, rows: inout Int, cols: inout Int) {
-        logger.info("Model \(dimension.name()) being loaded")
+    // ultimos 2 elementos do arquivo binário lido é rows e cols
+    private func loadModelFromBinFile(
+        dimension: ReconstructionDimension,
+        model: inout [Float]?,
+        rows: inout Int,
+        cols: inout Int
+    ) {
+        logger.info("Model \(dimension.name()) being loaded from bin file")
+        let startDate = Date()
+        
+        let url = URL.fromFilesFolder(name: "model_\(dimension.name())", ext: "binExit")
+        
+        var rData: Data
+        
+        do {
+            rData = try Data(contentsOf: url)
+        } catch {
+            logger.error("Error loading data from URL")
+            return
+        }
+
+        rData.withUnsafeBytes { (bytes: UnsafePointer<Float>) in
+            model = Array(UnsafeBufferPointer(start: bytes, count: rData.count / MemoryLayout<Float>.size))
+        }
+        
+        guard let auxCols = model?.removeLast() else {
+            logger.error("Error getting cols from \(dimension.name()) bin file")
+            return
+        }
+        guard let auxRows = model?.removeLast() else {
+            logger.error("Error getting cols from \(dimension.name()) bin file")
+            return
+        }
+        
+        cols = Int(auxCols)
+        rows = Int(auxRows)
+        
+        let duration = Date().timeIntervalSince(startDate)
+        logger.info("Model \(dimension.name()) loaded in \(duration) seconds")
+    }
+    
+    private func loadModel(
+        dimension: ReconstructionDimension,
+        model: inout [Float]?,
+        rows: inout Int,
+        cols: inout Int
+    ) {
+        if FileManager.default.fileExists(atPath: dimension.binFileModelURL().path) {
+            loadModelFromBinFile(
+                dimension: dimension,
+                model: &model,
+                rows: &rows,
+                cols: &cols
+            )
+            return
+        }
+        
+        logger.info("Model \(dimension.name()) being loaded from CSV file")
+        
         guard FileManager.default.fileExists(atPath: dimension.modelURL().path) else {
             logger.error("Model file \(dimension.modelURL().absoluteString) is missing")
             return
@@ -61,7 +128,9 @@ public class ReconstructionService {
         var modelCols = 0
         while (bytesRead > 0) {
             let lineAsString: String = String.init(cString: lineByteArrayPointer!)
-            let lineAsFloatArray: [Float] = lineAsString.components(separatedBy: ",").map { ($0 as NSString).floatValue }
+            let lineAsFloatArray: [Float] = lineAsString.components(separatedBy: ",").map {
+                ($0 as NSString).floatValue
+            }
             model?.append(contentsOf: lineAsFloatArray)
             bytesRead = getline(&lineByteArrayPointer, &lineCap, filePointer)
             
@@ -74,6 +143,32 @@ public class ReconstructionService {
         
         let duration = Date().timeIntervalSince(startDate)
         logger.info("Model \(dimension.name()) loaded in \(duration) seconds")
+        
+        if let model {
+            createModelBinFile(model, dimension: dimension, rows: rows, cols: cols)
+        }
+    }
+    
+    private func createModelBinFile(
+        _ model: [Float],
+        dimension: ReconstructionDimension,
+        rows: Int,
+        cols: Int
+    ) {
+        let url = URL.fromFilesFolder(name: "model_\(dimension.name())", ext: "binExit")
+        
+        var modelToSave: [Float] = model
+        modelToSave.append(Float(rows))
+        modelToSave.append(Float(cols))
+        
+        let wData = Data(bytes: modelToSave, count: modelToSave.count * MemoryLayout<Float>.stride)
+        do {
+            try wData.write(to: url)
+        } catch {
+            logger.info("Error: \(error)")
+        }
+
+        logger.info("Created model_\(dimension.name()).binExit file")
     }
     
     public func reconstruct(_ input: ReconstructionInput) -> ReconstructionOutput? {
