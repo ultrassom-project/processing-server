@@ -26,8 +26,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_30x30_1",
 //            ext: "csv",
 //            dimension: ._30x30,
-//            algorithm: .CGNE,
-//            signalGain: 1
+//            algorithm: .CGNE
 //        )
 //    )
 //
@@ -36,8 +35,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_30x30_1",
 //            ext: "csv",
 //            dimension: ._30x30,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -46,8 +44,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_30x30_2",
 //            ext: "csv",
 //            dimension: ._30x30,
-//            algorithm: .CGNE,
-//            signalGain: 1
+//            algorithm: .CGNE
 //        )
 //    )
 //
@@ -56,8 +53,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_30x30_2",
 //            ext: "csv",
 //            dimension: ._30x30,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -66,8 +62,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_30x30_3",
 //            ext: "csv",
 //            dimension: ._30x30,
-//            algorithm: .CGNE,
-//            signalGain: 1
+//            algorithm: .CGNE
 //        )
 //    )
 //
@@ -76,8 +71,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_30x30_3",
 //            ext: "csv",
 //            dimension: ._30x30,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -86,8 +80,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_1",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNE,
-//            signalGain: 1
+//            algorithm: .CGNE
 //        )
 //    )
 //
@@ -96,8 +89,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_1",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -106,8 +98,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_2",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNE,
-//            signalGain: 1
+//            algorithm: .CGNE
 //        )
 //    )
 //
@@ -116,8 +107,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_2",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -127,8 +117,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_3",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNE,
-//            signalGain: 1
+//            algorithm: .CGNE
 //        )
 //    )
     
@@ -137,8 +126,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_3",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -147,8 +135,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_3",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -157,8 +144,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_3",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -167,8 +153,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_3",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 //
@@ -177,8 +162,7 @@ public func configure(_ app: Application) throws {
 //            fileName: "signal_60x60_3",
 //            ext: "csv",
 //            dimension: ._60x60,
-//            algorithm: .CGNR,
-//            signalGain: 1
+//            algorithm: .CGNR
 //        )
 //    )
 }

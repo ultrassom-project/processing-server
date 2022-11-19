@@ -41,6 +41,5 @@ public struct ReconstructionInput: Content {
     let userId: String
     let algorithm: ReconstructionAlgorithmType
     let dimension: ReconstructionDimension
-    let signalGain: Float
     let signalVector: [Float]
 }
