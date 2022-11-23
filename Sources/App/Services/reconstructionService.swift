@@ -171,6 +171,10 @@ public class ReconstructionService {
         logger.info("Created model_\(dimension.name()).binExit file")
     }
     
+    public func getReconstructionsInProgress() -> Int {
+        return self.reconstructionsInProgress
+    }
+    
     public func reconstruct(_ input: ReconstructionInput) -> ReconstructionOutput? {
         reconstructionsInProgress += 1
         
@@ -221,7 +225,13 @@ public class ReconstructionService {
     }
     
     public func canStartNewReconstruction() -> Bool {
-        if model60x60Loaded == false || model30x30Loaded == false {
+        if [model60x60Loaded, model30x30Loaded].contains(false) {
+            return false
+        }
+        
+        let cpuUsage = PerformanceManager.instance.getInstantCPUPerformance()
+        
+        if cpuUsage > 60.0 {
             return false
         }
         

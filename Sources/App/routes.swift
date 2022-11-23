@@ -7,5 +7,4 @@ func routes(_ app: Application) throws {
     
     let performance = app.grouped("performance")
     performance.on(.GET, "", use: getPerformanceReport)
-
 }

@@ -14,4 +14,8 @@ public struct FIFOQueue<T> {
         
         return items.removeFirst()
     }
+    
+    func size() -> Int {
+        return items.count
+    }
 }

@@ -19,6 +19,18 @@ public class ReconstructionManager {
         return self.outputList
     }
     
+    public func getReconstructionsInProgress() -> Int {
+        return self.reconstructionService.getReconstructionsInProgress()
+    }
+    
+    public func getReconstructionsInQueue() -> Int {
+        return self.inputQueue.size()
+    }
+    
+    public func getFinishedReconstructions() -> Int {
+        return self.outputList.count
+    }
+    
     public func handle() {
         Task(priority: .medium) {
             guard reconstructionService.canStartNewReconstruction() == true else {

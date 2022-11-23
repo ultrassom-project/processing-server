@@ -12,8 +12,23 @@ public class PerformanceManager {
     }
     
     public func createSnapshot() {
-        let snapshot = PerformanceSnapshot(date: Date(), memory: self.getMemoryUsage(), cpu: self.getCpuUsage())
+        let snapshot = PerformanceSnapshot(
+            date: Date(),
+            memory: self.getMemoryUsage(),
+            cpu: self.getCpuUsage(),
+            reconstructionsInProgress: ReconstructionManager.instance.getReconstructionsInProgress(),
+            reconstructionsInQueue: ReconstructionManager.instance.getReconstructionsInQueue(),
+            finishedReconstructions: ReconstructionManager.instance.getFinishedReconstructions()
+        )
         self.snapshots.append(snapshot)
+    }
+    
+    public func getInstantCPUPerformance() -> Float {
+        guard let lastSnapshot = self.snapshots.last else {
+            return 0
+        }
+        
+        return lastSnapshot.cpu
     }
     
     public func getReport(startDate: Date, endDate: Date) -> [PerformanceSnapshot] {
@@ -37,20 +52,14 @@ public class PerformanceManager {
             return 0
         }
 
-        let usrDiff = Float(load.cpu_ticks.0 - lastLoad.cpu_ticks.0);
-        let systDiff = Float(load.cpu_ticks.1 - lastLoad.cpu_ticks.1);
-        let idleDiff = Float(load.cpu_ticks.2 - lastLoad.cpu_ticks.2);
-        let niceDiff = Float(load.cpu_ticks.3 - lastLoad.cpu_ticks.3);
-
+        let usrDiff = Float(load.cpu_ticks.0 - lastLoad.cpu_ticks.0)
+        let systDiff = Float(load.cpu_ticks.1 - lastLoad.cpu_ticks.1)
+        let idleDiff = Float(load.cpu_ticks.2 - lastLoad.cpu_ticks.2)
+        let niceDiff = Float(load.cpu_ticks.3 - lastLoad.cpu_ticks.3)
         let totalTicks = usrDiff + systDiff + idleDiff + niceDiff
-//        let sys = (systDiff / totalTicks) * 100.0
-//        let usr = (usrDiff / totalTicks) * 100.0
         let idle = (idleDiff / totalTicks) * 100.0
-//        let nice = (niceDiff / totalTicks) * 100.0
-        
         self.lastCpuLoad = load
-
-        return 100 - idle;
+        return 100 - idle
     }
     
     private func hostCPULoadInfo() -> host_cpu_load_info? {
