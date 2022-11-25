@@ -38,6 +38,7 @@ public enum ReconstructionDimension: Int, Codable {
 }
 
 public struct ReconstructionInput: Content {
+    var id: Int?
     let userId: String
     let algorithm: ReconstructionAlgorithmType
     let dimension: ReconstructionDimension

@@ -8,8 +8,15 @@ public class ReconstructionManager {
     private let reconstructionService = ReconstructionService()
     private var inputQueue = FIFOQueue<ReconstructionInput>()
     private var outputList = [ReconstructionOutput]()
+    private var totalReconstructions: Int = 0
+    
+    public func getTotalReconstructions() -> Int {
+        return totalReconstructions
+    }
     
     public func enqueueInput(_ item: ReconstructionInput) {
+        totalReconstructions += 1
+        
         Task(priority: .background) {
             inputQueue.enqueue(item)
         }

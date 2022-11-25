@@ -1,10 +1,17 @@
 import Vapor
 
-public func enqueueReconstruction(req: Request) async throws -> HTTPStatus {
-    let input = try req.content.decode(ReconstructionInput.self)
+public struct EnqueueReconstructonResponse: Content {
+    let id: Int
+}
+
+public func enqueueReconstruction(req: Request) async throws -> EnqueueReconstructonResponse {
+    var input = try req.content.decode(ReconstructionInput.self)
     
+    let inputId = ReconstructionManager.instance.getTotalReconstructions()
+    input.id = inputId
     ReconstructionManager.instance.enqueueInput(input)
-    return HTTPStatus.created
+    
+    return EnqueueReconstructonResponse(id: inputId)
 }
 
 public func getReconstructionsReport(req: Request) async throws -> [ReconstructionOutput] {
